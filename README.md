@@ -1,3 +1,2 @@
 # osu! Auto Deafen
 
-Test to see README
