@@ -3,8 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"math"
+	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
@@ -13,6 +15,7 @@ import (
 	utils "github.com/Nat3z/osudeafen/utils"
 	"github.com/gorilla/websocket"
 	"github.com/micmonay/keybd_event"
+	"gopkg.in/ini.v1"
 )
 
 type ComboGosu struct {
@@ -61,11 +64,18 @@ type GoSuMemory struct {
 	Error    string       `json:"error"`
 }
 
+type GeneralSettings struct {
+	Name                         string `ini:"username"`
+	StartGosuMemoryAutomatically bool   `ini:"startgosumemory"`
+}
+
+type GameplaySettings struct {
+	DeafenPercent       float64 `ini:"deafenpercent"`
+	UndeafenAfterMisses float64 `ini:"undeafenmiss"`
+}
 type Settings struct {
-	Name                         string  `json:"name"`
-	DeafenPercent                float64 `json:"percent_of_map_until_deafen"`
-	UndeafenAfterMisses          float64 `json:"undeafen_after_misses"`
-	StartGosuMemoryAutomatically bool    `json:"start_gosumemory_automatically"`
+	Gameplay GameplaySettings `ini:"gameplay"`
+	General  GeneralSettings  `ini:"general"`
 }
 
 var addr = "localhost:24050"
@@ -101,14 +111,26 @@ func deafenOrUndeafen(kb keybd_event.KeyBonding, expect bool) {
 }
 
 func loadConfig() Settings {
-	content, err := os.ReadFile("settings.json")
+	cfg, err := ini.Load("config.ini")
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("[!!] No config.ini found! Creating a config.ini...")
+		out, _ := os.Create("config.ini")
+		resp, err := http.Get("https://raw.githubusercontent.com/nat3z/osuautodeafen/main/config.ini.temp")
+		if err != nil {
+			fmt.Println("[!!] Unable to get template for osuautodeafen. Please connect to the internet and try again later.")
+			os.Exit(1)
+		}
+		// tempout, _ := os.ReadFile("config.ini.temp")
+		// temp := string(tempout)
+		temp, _ := io.ReadAll(resp.Body)
+		out.Write(([]byte)(temp))
+		out.Close()
+		return loadConfig()
 	}
-	var settings Settings
-	json.Unmarshal(content, &settings)
+	var settings = new(Settings)
+	cfg.MapTo(&settings)
 
-	return settings
+	return *settings
 }
 
 func shutdown(cmnd exec.Cmd) {
@@ -128,7 +150,7 @@ func main() {
 
 	// if start gosumemory automatically is on, then start process
 	cmnd := exec.Command("./deps/gosumemory.exe")
-	if config.StartGosuMemoryAutomatically {
+	if config.General.StartGosuMemoryAutomatically {
 		fmt.Printf("[#] Starting GosuMemory... \n")
 		cmnd.Start()
 		time.Sleep(2 * time.Second)
@@ -155,7 +177,7 @@ func main() {
 		return
 	}
 	fmt.Println("[!] Connected to GosuMemory. Make sure that it stays on when playing osu!")
-	fmt.Println("[!] Playing as", config.Name)
+	fmt.Println("[!] Playing as", config.General.Name)
 
 	timesincelastws = time.Now().Unix()
 
@@ -182,7 +204,7 @@ func main() {
 
 			timesincelastws = time.Now().Unix()
 
-			if gosuResponse.Gameplay.Name == config.Name && inbeatmap {
+			if gosuResponse.Gameplay.Name == config.General.Name && inbeatmap {
 
 				if gosuResponse.Menu.BM.Time.Current > 1 && (recentlyjoined || alreadyDetectedRestart) {
 					recentlyjoined = false
@@ -194,8 +216,8 @@ func main() {
 					misses = gosuResponse.Gameplay.Hits.Misses
 				}
 
-				if misses >= config.UndeafenAfterMisses && alreadyDeafened {
-					fmt.Printf("| Missed too many times (%sx) for undeafen. Now undeafening..\n", fmt.Sprint(config.UndeafenAfterMisses))
+				if misses >= config.Gameplay.UndeafenAfterMisses && alreadyDeafened {
+					fmt.Printf("| Missed too many times (%sx) for undeafen. Now undeafening..\n", fmt.Sprint(config.Gameplay.UndeafenAfterMisses))
 					deafenOrUndeafen(kb, false)
 				}
 
@@ -204,7 +226,7 @@ func main() {
 					misses = 0
 					alreadyDetectedRestart = true
 					deafenOrUndeafen(kb, false)
-				} else if math.Floor(gosuResponse.Menu.BM.Stats.MaxCombo*config.DeafenPercent) < gosuResponse.Gameplay.Combo.Current && !alreadyDeafened && inbeatmap && misses == 0 {
+				} else if math.Floor(gosuResponse.Menu.BM.Stats.MaxCombo*config.Gameplay.DeafenPercent) < gosuResponse.Gameplay.Combo.Current && !alreadyDeafened && inbeatmap && misses == 0 {
 					fmt.Println("| Reached max combo treshold for map. Now deafening..")
 					deafenOrUndeafen(kb, true)
 				}
