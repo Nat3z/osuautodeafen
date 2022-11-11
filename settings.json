@@ -1,0 +1,6 @@
+{
+  "name": "username_on_osu",
+  "percent_of_map_until_deafen": 0.5,
+  "undeafen_after_misses": 1,
+  "start_gosumemory_automatically": true
+}
