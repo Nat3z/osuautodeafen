@@ -14,4 +14,4 @@ Powered by the popular tool, [GosuMemory](https://github.com/l3lackShark/gosumem
 
 # This project uses:
 * [gorilla-websocket](https://github.com/gorilla/websocket)
-* [gosumemory!](ttps://github.com/l3lackShark/gosumemory/)
+* [gosumemory](ttps://github.com/l3lackShark/gosumemory/)
