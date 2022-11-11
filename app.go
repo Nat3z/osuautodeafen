@@ -115,7 +115,7 @@ func loadConfig() Settings {
 	if err != nil {
 		fmt.Println("[!!] No config.ini found! Creating a config.ini...")
 		out, _ := os.Create("config.ini")
-		resp, err := http.Get("https://raw.githubusercontent.com/nat3z/osuautodeafen/main/config.ini.temp")
+		resp, err := http.Get("https://raw.githubusercontent.com/nat3z/osuautodeafen/master/config.ini.temp")
 		if err != nil {
 			fmt.Println("[!!] Unable to get template for osuautodeafen. Please connect to the internet and try again later.")
 			os.Exit(1)
@@ -125,7 +125,10 @@ func loadConfig() Settings {
 		temp, _ := io.ReadAll(resp.Body)
 		out.Write(([]byte)(temp))
 		out.Close()
-		return loadConfig()
+		fmt.Println("[#] Config.ini has been created! Please setup the config file and launch osuautodeafen.")
+		time.Sleep(5 * time.Second)
+		os.Exit(0)
+		return Settings{}
 	}
 	var settings = new(Settings)
 	cfg.MapTo(&settings)
