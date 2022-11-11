@@ -4,10 +4,10 @@ Powered by the popular tool, [GosuMemory](https://github.com/l3lackShark/gosumem
 
 # Usage
 1. Download the [latest release](https://github.com/Nat3z/osuautodeafen/releases/latest) and unzip it.
-1. In "settings.json" set the "username" field to your username on osu! 
+1. In "config.ini" set the "username" field to your username on osu! 
 1. Set your Discord Deafen keybind to ALT+D
 1. Launch osu! 
 1. After osu! has fully loaded, launch "osuautodeafen.exe" and wait for it to start.
 1. You're all set!
 
-> Please know that osu! Auto Deafen is still in development. Whenever we make major changes, you may need to update your settings.json 
+> Please know that osu! Auto Deafen is still in development. Whenever we make major changes, you may need to manually update your config.ini
