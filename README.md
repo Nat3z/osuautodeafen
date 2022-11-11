@@ -13,5 +13,5 @@ Powered by the popular tool, [GosuMemory](https://github.com/l3lackShark/gosumem
 > Please know that osu! Auto Deafen is still in development. Whenever we make major changes, you may need to manually update your config.ini
 
 # This project uses:
-* [https://github.com/gorilla/websocket](gorilla-websocket)
-* [https://github.com/l3lackShark/gosumemory/](gosumemory!)
+* [gorilla-websocket](https://github.com/gorilla/websocket)
+* [gosumemory!](ttps://github.com/l3lackShark/gosumemory/)
