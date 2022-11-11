@@ -2,3 +2,4 @@ deps/
 *.zip
 *.exe
 *.ini
+*.syso
