@@ -20,6 +20,7 @@ type ReleaseAsset struct {
 type Releases struct {
 	Assets  []ReleaseAsset `json:"assets"`
 	TagName string         `json:"tag_name"`
+	Error   string         `json:"error"`
 }
 
 func CheckVersionGosu() bool {
@@ -39,6 +40,10 @@ func CheckVersionGosu() bool {
 			downloadLink = release.BrowserDownloadURL
 			break
 		}
+	}
+	if downloadLink == "" {
+		fmt.Println("[!!] Error occurred when checking for updates: POSSIBLE RATE LIMIT")
+		return false
 	}
 
 	var releaseVersion = ""
@@ -65,6 +70,7 @@ func CheckVersionGosu() bool {
 	var depserror = os.Remove("./deps/gosumemory.exe")
 	if depserror != nil {
 		fmt.Println("[+] Preparing for clean install of gosumemory.exe")
+		fmt.Println("[++] ", depserror)
 	}
 	DownloadGosuMemory(downloadLink)
 	out, _ := os.Create("./deps/version.txt")
@@ -85,6 +91,10 @@ func CheckVersion() bool {
 	bodyEncoded, _ := io.ReadAll(resp.Body)
 
 	json.Unmarshal(bodyEncoded, &releases)
+	if releases.TagName == "" {
+		fmt.Println("[!!] Error occurred when checking for updates: POSSIBLE RATE LIMIT")
+		return false
+	}
 
 	if version == releases.TagName {
 		fmt.Printf("[#] Up-to-date with osu! Auto Deafen.\n")

@@ -3,3 +3,4 @@ deps/
 *.exe
 *.ini
 *.syso
+*.json

@@ -65,15 +65,20 @@ func Unzip(src, dest string) error {
 	}
 
 	for _, f := range r.File {
-		if f.Name == "gosumemory.exe" {
-			if _, err := os.Stat("./deps/static"); !errors.Is(err, os.ErrNotExist) {
-				break
+		if f.Name == "static" {
+			if _, err := os.Stat("./deps/static"); errors.Is(err, os.ErrNotExist) {
+				err := extractAndWriteFile(f)
+				if err != nil {
+					return err
+				}
+			}
+		} else {
+			err := extractAndWriteFile(f)
+			if err != nil {
+				return err
 			}
 		}
-		err := extractAndWriteFile(f)
-		if err != nil {
-			return err
-		}
+
 	}
 
 	return nil

@@ -1,0 +1,182 @@
+:root {
+  overflow: hidden;
+}
+body {
+  background-attachment: fixed;
+  color: whitesmoke;
+  /* background-image: url("https://i.ppy.sh/7f8ec98a555be32d042ba205162238a509b812d1/68747470733a2f2f6f73752e7070792e73682f77696b692f696d616765732f436c69656e742f496e746572666163652f696d672f706c61792d6d656e752e6a7067"); */
+}
+
+.settings {
+  background: rgba(0, 0, 0, 0.75);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 209px;
+}
+
+.container {
+  width: 95%;
+  margin: auto;
+}
+header {
+  display: flex;
+  justify-content: start;
+  height: 1.5rem;
+  align-items: center;
+}
+
+header button {
+  width: fit-content;
+  height: fit-content;
+}
+
+header img {
+  width: 18px;
+  height: 18px;
+}
+hr {
+  border: none;
+  border-top: #343434 0.5px solid;
+  height: 1px;
+  margin: 0%;
+  position: relative;
+  margin-bottom: .25rem;
+}
+
+header button {
+  color: rgb(173, 0, 0);
+  position: absolute;
+  cursor: pointer;
+  width: fit-content;
+  border: none;
+  background: none;
+  width: fit-content;
+  height: fit-content;
+  right: 0.3rem;
+}
+header h1 {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  margin-left: 5px;
+  letter-spacing: 0.06rem;
+  font-weight: bold;
+}
+
+input[type=checkbox]::before {
+  position: absolute;
+  content: "";
+  display: block;
+  top: 2px;
+  left: 7px;
+  width: 8px;
+  height: 14px;
+  border-style: solid;
+  border-color: #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  opacity: 0;
+}
+
+section[data-toggle] input[type=checkbox] {
+  border: 1.5px #E7659F solid;
+  border-radius: 16px;
+  background: none;
+  right: 0.12rem;
+  width: 2.26rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+       appearance: none;
+  height: 0.8rem;
+  position: absolute;
+  outline: 0;
+  transition: background 175ms cubic-bezier(0.1, 0.1, 0.25, 1);
+}
+
+section[data-toggle] input[type=checkbox]:checked {
+  background-color: #E7659F;
+}
+
+section[data-slider] {
+  display: block;
+}
+
+section[data-slider] input[type=range] {
+  width: 9rem;
+  display: inline-block;
+}
+section[data-slider] label {
+  width: 2.15rem;
+  -webkit-appearance: none;
+  margin: 0;
+  -moz-appearance: textfield;
+  margin: 0%;
+  outline: none;
+  font-size: .5rem;
+  border-radius: 2px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: bold;
+  text-align: center;
+  margin-top: .15rem;
+  background: rgba(0, 0, 0);
+  border: 1px solid #1F1F1F;
+  color: whitesmoke;
+  position: absolute;
+  right: 0.3rem;
+  display: inline-block;
+}
+
+
+section[data-slider] {
+  height: 2.3rem;
+}
+
+section[data-textinput] input {
+  display: inline-block;
+  width: 2.3rem;
+  -webkit-appearance: none;
+  margin: 0;
+  -moz-appearance: textfield;
+  margin: 0%;
+  outline: none;
+  font-size: .5rem;
+  border-radius: 2px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: bold;
+  text-align: center;
+  background: rgba(0, 0, 0);
+  border: 1px solid #1F1F1F;
+  color: whitesmoke;
+  position: absolute;
+  right: 0.3rem;
+  display: inline-block;
+  transition: 175ms cubic-bezier(0.1, 0.1, 0.25, 1);
+}
+
+section[data-textinput] input:focus {
+  width: 5rem;
+  text-align: left;
+}
+
+section {
+  display: flex;
+  align-items: center;
+  margin: 0%;
+  height: 1rem;
+  margin-bottom: 0.1rem;
+  width: 100%;
+}
+
+section label {
+  margin-bottom: 5rem;
+}
+.settinglist h2 {
+  margin: 0%;
+  margin-right: 0% !important;
+  font-family: 'Nunito', sans-serif;
+  letter-spacing: 0.06rem;
+  font-size: 0.7rem;
+  width: fit-content;
+  font-weight: bold;
+}
