@@ -3,10 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"math"
-	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
@@ -15,7 +13,6 @@ import (
 	utils "github.com/Nat3z/osudeafen/utils"
 	"github.com/gorilla/websocket"
 	"github.com/micmonay/keybd_event"
-	"gopkg.in/ini.v1"
 )
 
 type ComboGosu struct {
@@ -35,6 +32,7 @@ type BeatmapGosu struct {
 type TimeGosu struct {
 	Current  float32 `json:"current"`
 	Full     float32 `json:"full"`
+	Mp3      float32 `json:"mp3"`
 	FirstObj float32 `json:"firstObj"`
 }
 type MenuGosu struct {
@@ -64,24 +62,9 @@ type GoSuMemory struct {
 	Error    string       `json:"error"`
 }
 
-type GeneralSettings struct {
-	Name                         string `ini:"username"`
-	StartGosuMemoryAutomatically bool   `ini:"startgosumemory"`
-}
-
-type GameplaySettings struct {
-	DeafenPercent       float64 `ini:"deafenpercent"`
-	UndeafenAfterMisses float64 `ini:"undeafenmiss"`
-}
-type Settings struct {
-	Gameplay GameplaySettings `ini:"gameplay"`
-	General  GeneralSettings  `ini:"general"`
-}
-
 var addr = "localhost:24050"
 var alreadyDeafened = false
 
-var state int = 0
 var recentlyjoined = false
 var alreadyDetectedRestart = false
 var inbeatmap = false
@@ -110,30 +93,17 @@ func deafenOrUndeafen(kb keybd_event.KeyBonding, expect bool) {
 	alreadyDeafened = !alreadyDeafened
 }
 
-func loadConfig() Settings {
-	cfg, err := ini.Load("config.ini")
-	if err != nil {
-		fmt.Println("[!!] No config.ini found! Creating a config.ini...")
-		out, _ := os.Create("config.ini")
-		resp, err := http.Get("https://raw.githubusercontent.com/nat3z/osuautodeafen/master/config.ini.temp")
-		if err != nil {
-			fmt.Println("[!!] Unable to get template for osuautodeafen. Please connect to the internet and try again later.")
-			os.Exit(1)
-		}
-		// tempout, _ := os.ReadFile("config.ini.temp")
-		// temp := string(tempout)
-		temp, _ := io.ReadAll(resp.Body)
-		out.Write(([]byte)(temp))
-		out.Close()
-		fmt.Println("[#] Config.ini has been created! Please setup the config file and launch osuautodeafen.")
-		time.Sleep(5 * time.Second)
-		os.Exit(0)
-		return Settings{}
-	}
-	var settings = new(Settings)
-	cfg.MapTo(&settings)
+var unloadedConfig = false
 
-	return *settings
+func loadConfig() utils.Settings {
+	var cfg utils.Settings
+	content, err := os.ReadFile("config.json")
+	if err != nil {
+		unloadedConfig = true
+	}
+	json.Unmarshal(content, &cfg)
+
+	return cfg
 }
 
 func shutdown(cmnd exec.Cmd) {
@@ -150,6 +120,12 @@ func main() {
 	utils.CheckVersion()
 	utils.CheckVersionGosu()
 	var config = loadConfig()
+
+	if unloadedConfig {
+		fmt.Println("[!] Please configure osu! Auto Deafen in the window that has popped up.")
+		utils.CreateWindow(config, true)
+		config = loadConfig()
+	}
 
 	// if start gosumemory automatically is on, then start process
 	cmnd := exec.Command("./deps/gosumemory.exe")
@@ -176,15 +152,19 @@ func main() {
 
 	if err != nil {
 		fmt.Println("[!!] Error when connecting to GosuMemory. Please make sure that GosuMemory is open and is connected to osu!")
-		shutdown(*cmnd)
 		return
 	}
 	fmt.Println("[!] Connected to GosuMemory. Make sure that it stays on when playing osu!")
+
 	fmt.Println("[!] Playing as", config.General.Name)
 
 	timesincelastws = time.Now().Unix()
 
 	go func() {
+		if utils.State == 0 && !utils.WindowAlreadyOpened {
+			utils.CreateWindow(config, false)
+			config = loadConfig()
+		}
 		for {
 			if time.Now().Unix()-timesincelastws > 1 {
 				fmt.Println("[!!] osu! has closed. Now stopping osu! Auto Deafen...")
@@ -193,6 +173,7 @@ func main() {
 			}
 		}
 	}()
+
 	for {
 		_, message, err := ws.ReadMessage()
 		if err != nil {
@@ -214,9 +195,12 @@ func main() {
 					alreadyDetectedRestart = false
 				}
 
-				if gosuResponse.Gameplay.Hits.Misses-misses != 0 {
+				if gosuResponse.Gameplay.Hits.Misses-misses > 0 || gosuResponse.Gameplay.Hits.SliderBreak+gosuResponse.Gameplay.Hits.Misses != misses {
 					fmt.Println("| Missed, Broke, or lost combo. Incrementing miss count.")
 					misses = gosuResponse.Gameplay.Hits.Misses
+					if config.Gameplay.CountSliderBreaksAsMiss {
+						misses += gosuResponse.Gameplay.Hits.SliderBreak
+					}
 				}
 
 				if misses >= config.Gameplay.UndeafenAfterMisses && alreadyDeafened {
@@ -235,17 +219,17 @@ func main() {
 				}
 			}
 
-			if gosuResponse.Menu.State == 2 && state != 2 {
+			if gosuResponse.Menu.State == 2 && utils.State != 2 {
 				fmt.Println("[#] Detected Beatmap Join")
 				inbeatmap = true
 				recentlyjoined = true
-			} else if state == 2 && gosuResponse.Menu.State != 2 && inbeatmap {
+			} else if utils.State == 2 && gosuResponse.Menu.State != 2 && inbeatmap {
 				fmt.Println("[#] Detected Beatmap Exit")
 				inbeatmap = false
 				misses = 0
 				deafenOrUndeafen(kb, false)
 			}
-			state = gosuResponse.Menu.State
+			utils.State = gosuResponse.Menu.State
 		}
 	}
 	shutdown(*cmnd)

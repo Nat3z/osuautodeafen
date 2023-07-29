@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=ABeeZee&family=Nunito&display=swap" rel="stylesheet"> 
+  <link rel="stylesheet" href="slider.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script defer src="./app.js"></script>
+  <title>Document</title>
+</head>
+<body>
+
+    <div class="settings">
+      <form>
+        <div class="container">
+          <header>
+            <img src="../../assets/logo-not-transparent.png">
+            <h1>Settings</h1>
+            <button type="submit" style="appearance: none; display: flex; justify-content: center; align-items: center;" id="close">
+              <span class="material-symbols-outlined" style="font-size: 15px;">
+                close
+              </span>
+            </button>
+
+          </header>
+          <hr>
+
+          <div class="settinglist">
+              <section data-toggle data-var-attach="general:startgosumemory">
+                <h2>Start with GosuMemory</h2>
+    
+                <input type="checkbox" name="general:startgosumemory" checked />
+              </section>
+    
+              <section data-toggle data-var-attach="gameplay:countsliderbreakmiss">
+                <h2>Slider Breaks as Miss</h2>
+    
+                <input type="checkbox" name="gameplay:countsliderbreakmiss" />
+              </section>
+    
+              <section data-slider data-var-attach="gameplay:deafenpercent" data-convdecimal="%">
+                <h2>Deafen Percent</h2>
+    
+                <input type="range" data-suffix="%" max="100" min="1" name="gameplay:deafenpercent" value="50"/>
+                <label>50%</label>
+              </section>
+    
+              <section data-slider data-var-attach="gameplay:undeafenmiss">
+                <h2>Undeafen at Misses</h2>
+    
+                <input type="range" data-suffix="x" max="10" min="1" value="1" name="gameplay:undeafenmiss" />
+                <label>1x</label>
+              </section>
+              
+              <section data-textinput data-var-attach="general:username">
+                <h2>Username</h2>
+    
+                <input name="general:username"/>
+              </section>
+          </div>
+        </div>
+      </form>
+    </div>
+</body>
+</html>
