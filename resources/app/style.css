@@ -1,5 +1,6 @@
 :root {
   overflow: hidden;
+  overflow-y: auto;
 }
 body {
   background-attachment: fixed;
@@ -20,11 +21,20 @@ body {
   width: 95%;
   margin: auto;
 }
+
+.settinglist {
+  margin-top: 1.7rem;
+}
 header {
   display: flex;
   justify-content: start;
   height: 1.5rem;
+  margin-left: -.3rem;
+  padding: 2px 0px 2px 4px;
   align-items: center;
+  position: fixed;
+  margin-top: -1.7rem;
+  width: 200px
 }
 
 header button {
@@ -45,6 +55,12 @@ hr {
   margin-bottom: .25rem;
 }
 
+/* get the first hr */
+hr:first-of-type {
+  width: 197px;
+  margin-top: 1.75rem;
+  margin-left: -6rem;
+}
 header button {
   color: rgb(173, 0, 0);
   position: absolute;
@@ -154,6 +170,26 @@ section[data-slider] {
   height: 2.3rem;
 }
 
+.settinglist button[type=button] {
+  cursor: pointer;
+  border: none;
+  display: block;
+  background: #1F1F1F;
+  color: whitesmoke;
+  font-family: 'Nunito', sans-serif;
+  font-weight: bold;
+  width: 90%;
+  height: 1.3rem;
+  margin: auto;
+  margin-top: .5rem;
+  border-radius: 8px;
+  transition: 175ms cubic-bezier(0.1, 0.1, 0.25, 1);
+}
+
+.settinglist button[type=button]:hover {
+  background: #2F2F2F;
+  box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.75);
+}
 section[data-textinput] input {
   display: inline-block;
   width: 2.3rem;
@@ -202,3 +238,19 @@ section label {
   width: fit-content;
   font-weight: bold;
 }
+
+/* create a custom scrollbar similar to firefox's */
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+#close {
+  appearance: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 175ms cubic-bezier(0.1, 0.1, 0.25, 1);
+}
+
+

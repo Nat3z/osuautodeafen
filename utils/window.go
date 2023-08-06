@@ -6,10 +6,13 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/asticode/go-astikit"
 	"github.com/asticode/go-astilectron"
+	"github.com/jxeng/shortcut"
+	"github.com/ncruces/zenity"
 )
 
 type Message struct {
@@ -47,6 +50,7 @@ var resources = []string{
 	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/future/resources/app/slider.css",
 	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/future/assets/logo-not-transparent.png",
 	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/future/resources/app/version.txt",
+	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/future/resources/app/osu.ico",
 }
 
 func DownloadResources() {
@@ -80,6 +84,7 @@ func DownloadResources() {
 	}
 	fmt.Println("[#] Finished downloading resources.")
 }
+
 func CreateWindow(settings Settings, isFirstLoad bool) {
 
 	if WindowAlreadyOpened {
@@ -137,7 +142,7 @@ func CreateWindow(settings Settings, isFirstLoad bool) {
 	a.Start()
 	// 220 width by default
 	var w, _ = a.NewWindow("./resources/app/index.html", &astilectron.WindowOptions{
-		Height:      astikit.IntPtr(200),
+		Height:      astikit.IntPtr(205),
 		Width:       astikit.IntPtr(195),
 		AlwaysOnTop: astikit.BoolPtr(true),
 		Transparent: astikit.BoolPtr(true),
@@ -182,7 +187,49 @@ func CreateWindow(settings Settings, isFirstLoad bool) {
 		fmt.Println(s)
 		var message SettingAsMessage
 		json.Unmarshal([]byte(s), &message)
+		if message.Type == "generate-shortcut" {
+			// ask the user for where the "osu!.exe" file is
+			// get the username of the user
+			var username = os.Getenv("USERNAME")
+			println(username)
+			filedialog, diagerr := zenity.SelectFile(zenity.Title("Select osu!.exe"), zenity.FileFilters{
+				zenity.FileFilter{
+					Name: "osu!.exe",
+				},
+			}, zenity.Filename("C:\\"+username+"\\AppData\\Local\\osu!\\osu!.exe"))
+			if diagerr != nil {
+				fmt.Println("[!!] Error occurred when opening file dialog.")
+				return "ERROR"
+			}
+			// get the path of the file
+			var path = filedialog
+			// get the local path of this .exe file
+			ex, err := os.Executable()
+			if err != nil {
+				panic(err)
+			}
+
+			// get the path of the file (including the file name)
+			exPath := filepath.Dir(ex) + "\\" + filepath.Base(ex)
+			println(exPath)
+			// create the shortcut
+			//
+			generatedShortcut := shortcut.Shortcut{
+				ShortcutPath:     "C:\\Users\\" + username + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\osu! Auto Deafen.lnk",
+				Target:           exPath,
+				IconLocation:     filepath.Dir(ex) + "\\resources\\app\\osu.ico",
+				Arguments:        "--open \"" + path + "\"",
+				WorkingDirectory: filepath.Dir(ex),
+			}
+			shortcut.Create(generatedShortcut)
+			println(exPath)
+			return "SUCCESS"
+		}
 		remarshal, _ := json.Marshal(message.Value)
+		if message.Value.General.DeafenKey == "" {
+			message.Value.General.DeafenKey = "alt+d"
+		}
+
 		out, _ := os.Create("config.json")
 		out.Write(([]byte)(remarshal))
 		out.Close()

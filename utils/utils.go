@@ -366,6 +366,10 @@ func GenerateKeybonding(deafenKey string) keybd_event.KeyBonding {
 		kb.SetKeys(keybd_event.VK_RIGHT)
 	}
 
+	if strings.Contains(deafenKey, "arrowup") {
+		kb.SetKeys(keybd_event.VK_UP)
+	}
+
 	if strings.Contains(deafenKey, "printscreen") {
 		kb.SetKeys(keybd_event.VK_PRINT)
 	}
