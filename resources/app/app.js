@@ -4,10 +4,25 @@ document.querySelector("form").addEventListener("submit", event => {
 
   for (const section of document.querySelectorAll("section")) {
     let input = section.querySelector("input")
+    if (!input && section.querySelector("button")) {
+      let parentKey = section.getAttribute("data-var-attach").split(":")[0]
+      let actualKey = section.getAttribute("data-var-attach").split(":")[1]
+      if (!info[parentKey])
+        info[parentKey] = {}
+
+      if (section.querySelector("button").textContent === "Bind") {
+        info[parentKey][actualKey] = ""
+        continue
+      }
+      info[parentKey][actualKey] = section.querySelector("button").textContent
+      continue
+    }
+
     let parentKey = input.name.split(":")[0]
     let actualKey = input.name.split(":")[1]
     if (!info[parentKey])
       info[parentKey] = {}
+
     if (section.hasAttribute("data-toggle")) {
       info[parentKey][actualKey] = input.checked
     } else if (section.hasAttribute("data-slider")) {
@@ -25,6 +40,50 @@ document.querySelectorAll("input[type=range]").forEach(elem => {
   elem.addEventListener("input", () => {
     elem.parentElement.querySelector("label").textContent = elem.value + elem.getAttribute("data-suffix")
   })
+})
+
+document.querySelectorAll("section[data-keyinput]").forEach(elem => {
+  const bindButton = elem.querySelector("button")
+  bindButton.textContent = "Bind"
+  bindButton.addEventListener("click", (event) => {
+    event.preventDefault()
+
+    bindButton.textContent = "Press a key..."
+    elem.setAttribute("data-keyinput", "true")
+  })
+})
+
+const modifierUsed = {
+  "Shift": false,
+  "Control": false,
+  "Alt": false,
+  "Meta": false
+}
+document.addEventListener("keydown", (e) => {
+  let keyinput = document.querySelector("section[data-keyinput=true]")
+  // check if the key is either a shift, ctrl, alt, or meta key
+  if (e.key === "Shift" || e.key === "Control" || e.key === "Alt" || e.key === "Meta") {
+    modifierUsed[e.key] = true
+    return
+  }
+  if (keyinput) {
+    let keybind = ""
+    if (modifierUsed["Control"]) keybind += "ctrl+"
+    if (modifierUsed["Alt"]) keybind += "alt+"
+    if (modifierUsed["Shift"]) keybind += "shift+"
+    if (modifierUsed["Meta"]) keybind += "meta+"
+    keybind += e.key
+    keyinput.querySelector("button").textContent = keybind.toLowerCase()
+    keyinput.setAttribute("data-keyinput", "false")
+  }
+})
+
+document.addEventListener("keyup", (e) => {
+  // check if the key is either a shift, ctrl, alt, or meta key
+  if (e.key === "Shift" || e.key === "Control" || e.key === "Alt" || e.key === "Meta") {
+    modifierUsed[e.key] = false
+    return
+  }
 })
 
 document.addEventListener('astilectron-ready', function(e) {
@@ -55,6 +114,9 @@ document.addEventListener('astilectron-ready', function(e) {
                     let label = elem.querySelector("label")
                     label.textContent = valtoset + input.getAttribute("data-suffix")
                   }
+                }
+                else if (elem.hasAttribute("data-keyinput")) {
+                  elem.querySelector("button").textContent = valtoset
                 }
               }
             }

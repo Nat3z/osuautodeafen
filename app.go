@@ -132,18 +132,16 @@ func main() {
 	if config.General.StartGosuMemoryAutomatically {
 		fmt.Printf("[#] Starting GosuMemory... \n")
 		cmnd.Start()
-		time.Sleep(2 * time.Second)
+		time.Sleep(4 * time.Second)
 	}
 
 	deafenKeybind := "alt+d"
-	kb, err := keybd_event.NewKeyBonding()
-
-	if err != nil {
-		panic(err)
+	if config.General.DeafenKey != "" {
+		deafenKeybind = config.General.DeafenKey
 	}
+
 	// Select keys to be pressed
-	kb.SetKeys(keybd_event.VK_D)
-	kb.HasALT(true)
+	kb := utils.GenerateKeybonding(deafenKeybind)
 
 	fmt.Printf("[!] Deafen keybind will be %s. Please make sure that your deafen keybind is set to this.\n", deafenKeybind)
 
@@ -164,6 +162,7 @@ func main() {
 		if utils.State == 0 && !utils.WindowAlreadyOpened {
 			utils.CreateWindow(config, false)
 			config = loadConfig()
+			kb = utils.GenerateKeybonding(deafenKeybind)
 		}
 		for {
 			if time.Now().Unix()-timesincelastws > 1 {

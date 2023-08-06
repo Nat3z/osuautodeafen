@@ -127,6 +127,28 @@ section[data-slider] label {
   display: inline-block;
 }
 
+section[data-keyinput] button {
+  display: inline-block;
+  min-width: 2.7rem;
+  -webkit-appearance: none;
+  margin: 0;
+  -moz-appearance: textfield;
+  margin: 0%;
+  outline: none;
+  font-size: .5rem;
+  border-radius: 2px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: bold;
+  text-align: center;
+  background: rgba(0, 0, 0);
+  border: 1px solid #1F1F1F;
+  color: whitesmoke;
+  position: absolute;
+  right: 0.3rem;
+  display: inline-block;
+  transition: 175ms cubic-bezier(0.1, 0.1, 0.25, 1);
+}
+
 
 section[data-slider] {
   height: 2.3rem;
