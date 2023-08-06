@@ -184,14 +184,12 @@ func CreateWindow(settings Settings, isFirstLoad bool) {
 	w.OnMessage(func(m *astilectron.EventMessage) (v interface{}) {
 		var s string
 		m.Unmarshal(&s)
-		fmt.Println(s)
 		var message SettingAsMessage
 		json.Unmarshal([]byte(s), &message)
 		if message.Type == "generate-shortcut" {
 			// ask the user for where the "osu!.exe" file is
 			// get the username of the user
 			var username = os.Getenv("USERNAME")
-			println(username)
 			filedialog, diagerr := zenity.SelectFile(zenity.Title("Select osu!.exe"), zenity.FileFilters{
 				zenity.FileFilter{
 					Name: "osu!.exe",
@@ -211,7 +209,6 @@ func CreateWindow(settings Settings, isFirstLoad bool) {
 
 			// get the path of the file (including the file name)
 			exPath := filepath.Dir(ex) + "\\" + filepath.Base(ex)
-			println(exPath)
 			// create the shortcut
 			//
 			generatedShortcut := shortcut.Shortcut{
@@ -222,7 +219,6 @@ func CreateWindow(settings Settings, isFirstLoad bool) {
 				WorkingDirectory: filepath.Dir(ex),
 			}
 			shortcut.Create(generatedShortcut)
-			println(exPath)
 			return "SUCCESS"
 		}
 		remarshal, _ := json.Marshal(message.Value)
