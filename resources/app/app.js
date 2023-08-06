@@ -42,6 +42,12 @@ document.querySelectorAll("input[type=range]").forEach(elem => {
   })
 })
 
+document.querySelector("#generate-shortcut").addEventListener("click", (event) => {
+  event.preventDefault()
+  astilectron.sendMessage(JSON.stringify({ "type": "generate-shortcut" }), (m) => {
+    console.log(m)
+  })
+})
 document.querySelectorAll("section[data-keyinput]").forEach(elem => {
   const bindButton = elem.querySelector("button")
   bindButton.textContent = "Bind"
@@ -102,6 +108,14 @@ document.addEventListener('astilectron-ready', function(e) {
               let valtoset = message.value[category][field]
               if (valtoset !== undefined) {
                 let input = elem.querySelector("input")
+                if (!input && elem.querySelector("button")) {
+                  if (valtoset === "") {
+                    elem.querySelector("button").textContent = "Bind"
+                    return
+                  }
+                  elem.querySelector("button").textContent = valtoset
+                  return
+                }
                 input.setAttribute("name", elem.getAttribute("data-var-attach"))
                 if (elem.hasAttribute("data-toggle")) {
                   input.checked = valtoset
@@ -114,9 +128,6 @@ document.addEventListener('astilectron-ready', function(e) {
                     let label = elem.querySelector("label")
                     label.textContent = valtoset + input.getAttribute("data-suffix")
                   }
-                }
-                else if (elem.hasAttribute("data-keyinput")) {
-                  elem.querySelector("button").textContent = valtoset
                 }
               }
             }

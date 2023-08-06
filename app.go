@@ -126,6 +126,16 @@ func main() {
 		utils.CreateWindow(config, true)
 		config = loadConfig()
 	}
+	// check if the argument "--open" is passed, and if so, run the program.
+	if len(os.Args) > 1 {
+		if os.Args[1] == "--open" {
+			var porgram = os.Args[2]
+			fmt.Printf("[#] Opening %s... \n", porgram)
+			// run program async
+			go exec.Command(porgram).Run()
+			time.Sleep(4 * time.Second)
+		}
+	}
 
 	// if start gosumemory automatically is on, then start process
 	cmnd := exec.Command("./deps/gosumemory.exe")
