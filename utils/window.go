@@ -44,13 +44,13 @@ var State int = 0
 var WindowAlreadyOpened = false
 
 var resources = []string{
-	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/future/resources/app/app.js",
-	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/future/resources/app/index.html",
-	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/future/resources/app/style.css",
-	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/future/resources/app/slider.css",
-	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/future/assets/logo-not-transparent.png",
-	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/future/resources/app/version.txt",
-	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/future/resources/app/osu.ico",
+	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/master/resources/app/app.js",
+	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/master/resources/app/index.html",
+	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/master/resources/app/style.css",
+	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/master/resources/app/slider.css",
+	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/master/assets/logo-not-transparent.png",
+	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/master/resources/app/version.txt",
+	"https://raw.githubusercontent.com/Nat3z/osuautodeafen/master/resources/app/osu.ico",
 }
 
 func DownloadResources() {
